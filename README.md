@@ -1,0 +1,2 @@
+# GithubInspector
+Github Actions Inspector
