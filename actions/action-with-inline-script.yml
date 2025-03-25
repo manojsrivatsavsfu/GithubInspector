@@ -1,0 +1,13 @@
+name: ActionWithRun
+on: [pull_request]
+permissions: read
+jobs:
+  SomeJob:
+    steps:
+      - name: run some script
+        run: echo $PATH
+      # adding download artifact example here too
+      - uses: actions/download-artifact@v3
+        with:
+          name: my-artifact
+          path: path/to/artifact
