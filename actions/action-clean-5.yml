@@ -1,0 +1,8 @@
+name: clean5
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Step
+        run: echo "No references"

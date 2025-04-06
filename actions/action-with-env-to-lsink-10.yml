@@ -1,0 +1,10 @@
+name: test10
+on: [push]
+env:
+  MORE_SECRET: someVal
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Env to lsink
+        run: echo "Env Lsink => ${{ env.MORE_SECRET }}"
