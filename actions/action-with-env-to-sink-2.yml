@@ -1,0 +1,10 @@
+name: test2
+on: [push]
+env:
+  SECRET: ${{ github.actor }}
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Env to sink
+        run: echo "Env => ${{ env.SECRET }}"

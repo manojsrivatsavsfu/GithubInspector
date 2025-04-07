@@ -1,0 +1,8 @@
+name: test8
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Taint to unknown
+        run: echo "Unknown => ${{ steps.some_step.outputs.some_output }}"

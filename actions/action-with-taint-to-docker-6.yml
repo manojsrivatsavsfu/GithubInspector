@@ -1,0 +1,8 @@
+name: test6
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Taint to docker
+        run: docker run alpine echo ${{ inputs.abc }}
