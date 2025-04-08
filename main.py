@@ -1,6 +1,7 @@
 import glob
 import os
 import sys
+from termcolor import colored
 import ruamel.yaml as yaml
 from checker_modules.gwchecker import GWChecker
 from checker_modules.ghast import GhastChecker
@@ -87,12 +88,14 @@ def print_issues(file_path, issues):
         else:
             low.append(i)
     for i in high:
-        print(f"HIGH: {i['type']} - {i['message']}")
+        print(colored(f"HIGH: {i['type']} - {i['message']}", 'red'))
     for i in medium:
-        print(f"MEDIUM: {i['type']} - {i['message']}")
+        print(colored(f"MEDIUM: {i['type']} - {i['message']}", 'yellow'))
     for i in low:
-        print(f"LOW: {i['type']} - {i['message']}")
-
+        print(colored(f"LOW: {i['type']} - {i['message']}", 'green'))
+    
+    print("=" * 156)
+    print()
 
 def main(path):
     if os.path.isfile(path):
