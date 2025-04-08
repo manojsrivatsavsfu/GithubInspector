@@ -15,6 +15,7 @@
         "MailGun API Key": "key-[0-9a-zA-Z]{32}",
         "MailChip API Key": "[0-9a-f]{32}-us[0-9]{1,2}",
         "AWS Access Key ID": "AKIA[0-9A-Z]{16}",
-        "AWS Secret Access Key": "(?<!@)(?<![A-Za-z0-9/+=])[A-Za-z0-9/+=]{40}(?![A-Za-z0-9/+=])*" 
+        "AWS Secret Access Key": "(?<!@)(?<![A-Za-z0-9/+=])[A-Za-z0-9/+=]{40}(?![A-Za-z0-9/+=])*",
+        "pull request target": "pull_request_target"
     }
 }
