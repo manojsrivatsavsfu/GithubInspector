@@ -1,0 +1,20 @@
+{
+    "secrets": {
+        "twitter Token": "[1-9][0-9]+-[0-9a-zA-Z]{40}",
+        "facebook Token": "EAACEdEose0cBA[0-9A-Za-z]+",
+        "Youtube API Key": "AIza[0-9A-Za-z\\-_]{35}",
+        "Youtube OAuth ID": "[0-9]+-[0-9A-Za-z_]{32}\\.apps\\.googleusercontent\\.com",
+        "Picatic API Key": "sk_live_[0-9a-z]{32}",
+        "Stripe Standard API Key": "sk_live_[0-9a-zA-Z]{24}",
+        "Stripe Restricted API Key": "rk_live_[0-9a-zA-Z]{24}",
+        "Square Access Token": "sq0atp-[0-9A-Za-z\\-_]{22}",
+        "Square Oauth Secret": "sq0csp-[0-9A-Za-z\\-_]{43}",
+        "Paypal Braintree Access Token": "access_token\\$production\\$[0-9a-z]{16}\\$[0-9a-f]{32}",
+        "Amazon MWS Auth Token": "amzn\\.mws\\.[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}",
+        "Twilio API Key": "SK[0-9a-fA-F]{32}",
+        "MailGun API Key": "key-[0-9a-zA-Z]{32}",
+        "MailChip API Key": "[0-9a-f]{32}-us[0-9]{1,2}",
+        "AWS Access Key ID": "AKIA[0-9A-Z]{16}",
+        "AWS Secret Access Key": "(?<!@)(?<![A-Za-z0-9/+=])[A-Za-z0-9/+=]{40}(?![A-Za-z0-9/+=])*" 
+    }
+}

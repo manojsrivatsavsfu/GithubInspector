@@ -1,7 +1,6 @@
 import ruamel.yaml as yaml
-import glob
-import os
 import re
+import os
 
 TAINT_PATTERNS = [
     ("ARG_TO_SINK",         r"\$\{\{\s*inputs\..+?\}\}"),
@@ -19,11 +18,9 @@ TAINT_PATTERNS = [
 ]
 
 
-class Analyzer:
-
-    def __init__(self, file_path, parent_context=None):
-        self.file_path = file_path
-        self.workflow = {}
+class ArgusChecker:
+    def __init__(self, workflow, parent_context=None):
+        self.workflow = workflow
         self.issues = []
         self.tainted_inputs = set()
         self.tainted_env_workflow = set()
@@ -35,16 +32,6 @@ class Analyzer:
             self.tainted_inputs |= parent_context.get("tainted_inputs", set())
             self.tainted_env_workflow |= parent_context.get(
                 "tainted_env_workflow", set())
-        self.yaml_loader = yaml.YAML()
-        self.parse_file()
-
-    def parse_file(self):
-        if not os.path.exists(self.file_path):
-            self.workflow = {}
-            return
-        with open(self.file_path, "r", encoding="utf-8") as f:
-            text = f.read()
-        self.workflow = self.yaml_loader.load(text)
 
     def get_workflow_inputs(self):
         on_conf = self.workflow.get("on", {})
@@ -130,15 +117,10 @@ class Analyzer:
     def check_taint(self, job_id, step_id, step_index, line_num, line_text):
         for alert_type, pattern in TAINT_PATTERNS:
             if re.search(pattern, line_text):
-                self.issues.append(
-                    (
-                        f"JOB-{job_id}",
-                        f"STEP-{step_id}-{step_index}",
-                        f"Line-{line_num}",
-                        alert_type,
-                        line_text.strip()
-                    )
-                )
+                self.issues.append({
+                    "type": alert_type,
+                    "message": f"JOB-{job_id} STEP-{step_id}-{step_index} LINE-{line_num} {line_text.strip()}"
+                })
 
     def contains_dangerous_reference(self, val):
         if not isinstance(val, str):
@@ -160,9 +142,5 @@ class Analyzer:
         for idx, issue in enumerate(self.issues):
             print(f"{idx}. {issue}")
 
-
-if __name__ == "__main__":
-    for file in glob.glob("actions/*.yml"):
-        analyzer = Analyzer(file)
-        analyzer.analyze_all()
-        analyzer.print_issues()
+    def get_issues(self):
+        return self.issues
