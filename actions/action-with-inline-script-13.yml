@@ -1,0 +1,10 @@
+name: test13
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Inline script
+        run: |
+          echo "Inline => ${{ env.HELLO }}"
+          docker run busybox echo ${{ github.event_name }}

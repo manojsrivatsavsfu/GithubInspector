@@ -1,0 +1,19 @@
+name: Example-DownloadArtifact
+on: push
+
+permissions:
+  contents: read
+
+jobs:
+  test-job:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Fake Step
+        run: echo "No secrets or github context here"
+
+      - name: Download artifact
+        uses: dawidd6/action-download-artifact@0123456789012345678901234567890123456789
+        with:
+          path: artifacts/

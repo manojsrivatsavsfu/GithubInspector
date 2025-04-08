@@ -1,0 +1,8 @@
+name: test11
+on: [push]
+jobs:
+  caller:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Reusable wf out
+        run: echo "Reusable => ${{ needs.somejob.outputs.tainted }}"

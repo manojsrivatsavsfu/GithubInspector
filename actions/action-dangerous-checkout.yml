@@ -1,0 +1,17 @@
+name: Dangerous Checkout
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout with custom ref
+        uses: actions/checkout@1234567890abcdef1234567890abcdef12345678
+        with:
+          ref: feature/my-custom-branch
+
+      - name: Manual git checkout
+        run: |
+          git checkout develop

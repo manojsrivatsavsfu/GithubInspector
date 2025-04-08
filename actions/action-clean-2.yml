@@ -1,0 +1,9 @@
+name: clean2
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Another clean
+        run: |
+          echo "No suspicious references here"

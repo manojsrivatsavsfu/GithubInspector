@@ -1,0 +1,10 @@
+name: test5
+on: [push]
+env:
+  FOO: ${{ github.ref }}
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Env to shell with taint
+        run: echo "Env shell => ${{ env.FOO }}"

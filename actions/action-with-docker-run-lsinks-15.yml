@@ -1,0 +1,10 @@
+name: test15
+on: [push]
+env:
+  FOO: secretValue
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Docker run lsinks
+        run: docker run alpine echo ${{ env.FOO }}
