@@ -8,10 +8,11 @@ import requests
 class GWChecker:
     def __init__(self, file):
         self.file = file
-        self.workflow = {}
+        self.workflow = file
         self.issues = []
-        with open("regex.json", "r") as f:
-            self.regex_data = json.load(f)
+        f = open("regex.json", "r")
+        self.regex_data = json.load(f)
+        f.close()
 
     def analyze_all(self):
         for group_name, patterns_dict in self.regex_data.items():
@@ -22,11 +23,11 @@ class GWChecker:
     def regex_search(self, data, pattern, group_name, pattern_name):
         if isinstance(data, dict):
             for key, value in data.items():
-                self.regex_search(key, pattern)
-                self.regex_search(value, pattern)
+                self.regex_search(key, pattern, group_name, pattern_name)
+                self.regex_search(value, pattern, group_name, pattern_name)
         elif isinstance(data, list):
             for item in data:
-                self.regex_search(item, pattern)
+                self.regex_search(item, pattern, group_name, pattern_name)
         elif isinstance(data, str):
             if re.search(pattern, data):
                 self.issues.append({
