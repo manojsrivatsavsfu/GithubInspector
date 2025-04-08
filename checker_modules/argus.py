@@ -10,7 +10,7 @@ TAINT_PATTERNS = [
     ("ENV_TO_SHELL_WITH_TAINT", r"\$\{\{\s*env\..+?\}\}"),
     ("TAINT_TO_DOCKER",     r"docker\s+run.+\$\{\{.+?\}\}"),
     ("TAINT_TO_DEF_DOCKER", r"docker\s+build.+\$\{\{.+?\}\}"),
-    ("TAINT_TO_UNKNOWN",    r"\$\{\{.+?\}\}"),
+    #("TAINT_TO_UNKNOWN",    r"\$\{\{.+?\}\}"),
     ("ARG_TO_LSINK",        r"\$\{\{\s*inputs\..+?\}\}"),
     ("ENV_TO_LSINK",        r"\$\{\{\s*env\..+?\}\}"),
     ("REUSABLE_WF_TAINT_OUTPUT", r"\$\{\{\s*needs\..+?\}\}"),

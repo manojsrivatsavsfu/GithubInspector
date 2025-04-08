@@ -1,0 +1,27 @@
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    container:
+      image: fake.example.com/example
+      credentials:
+        username: user
+        password: hackme
+    services:
+      service-1:
+        image: fake.example.com/anotherexample
+        credentials:
+          username: user
+          password: hackme
+      service-2:
+        image: fake.example.com/yetanotherexample
+        credentials:
+          username: user
+          password: ${{ secrets.SOME_SECRET }}
+    steps:
+      - run: echo 'vulnerable!'

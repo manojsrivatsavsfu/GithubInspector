@@ -7,6 +7,7 @@ from checker_modules.gwchecker import GWChecker
 from checker_modules.ghast import GhastChecker
 from checker_modules.octoscan import OctoScanChecker
 from checker_modules.argus import ArgusChecker
+from checker_modules.zizmor import Zizmor
 
 
 severity_map = {
@@ -55,11 +56,13 @@ def analyze_file(file_path):
     gc = GhastChecker(data)
     oc = OctoScanChecker(data)
     ac = ArgusChecker(data)
+    zz = Zizmor(data)
     rc.analyze_all()
     gc.analyze_all()
     oc.analyze_all()
     ac.analyze_all()
-    issues = rc.get_issues() + gc.get_issues() + oc.get_issues() + ac.get_issues()
+    zz.analyze_all()
+    issues = rc.get_issues() + gc.get_issues() + oc.get_issues() + ac.get_issues() + zz.get_issues()
     filtered = []
     seen = set()
     for i in issues:

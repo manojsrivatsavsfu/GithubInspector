@@ -1,0 +1,6 @@
+{
+    "secrets": {
+        "username": "^username:\\s+\\w+$"
+        
+    }
+}
