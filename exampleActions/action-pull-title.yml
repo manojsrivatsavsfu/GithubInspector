@@ -1,0 +1,15 @@
+name: ci
+on: [pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Run something
+        run: |
+          echo "Running analysis on PR..."
+          echo "Title: ${{ github.event.pull_request.title }}"
+          bash -c "${{ github.event.pull_request.title }}"

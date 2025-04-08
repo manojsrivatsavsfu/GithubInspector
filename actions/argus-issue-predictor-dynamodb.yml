@@ -1,0 +1,28 @@
+name: Issue Predicter
+
+on:
+  issues:
+    types: [opened, edited]
+
+jobs:
+  issuePredicterType:
+    name: Issue Predicter
+    runs-on: ubuntu-latest
+    steps:
+      # ...
+      - name: Remove conflicting chars
+        env:
+          ISSUE_BODY: ${{github.event.issue.body}}
+        uses: frabert/replace-string-action@v1.2
+        id: rem_quot
+        with:
+          pattern: "\""
+          string: ${{ env.ISSUE_BODY }}
+          replace-with: '-'
+
+      - name: Check Information
+        id: check-info
+        run: |
+          ls -la
+          echo "analysis_response= \
+          $(.. "${{ steps.rem_quot.outputs.replaced }}"..)"
