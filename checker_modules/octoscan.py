@@ -23,17 +23,20 @@ class OctoScanChecker:
         self.issues = []
 
     def analyze_all(self):
-        jobs = self.workflow.get("jobs", {})
-        for job_name, job_data in jobs.items():
-            services = job_data.get("services", {})
-            for svc_name, svc_data in services.items():
-                self.check_expression_injection(job_name, svc_name, svc_data)
-            steps = job_data.get("steps", [])
-            for step_num, step_data in enumerate(steps):
-                self.check_run_commands(job_name, step_num, step_data)
-                self.check_action_usage(job_name, step_num, step_data)
-                self.check_upload_artifact(job_name, step_num, step_data)
-                self.check_dangerous_checkout(job_name, step_num, step_data)
+        try:
+            jobs = self.workflow.get("jobs", {})
+            for job_name, job_data in jobs.items():
+                services = job_data.get("services", {})
+                for svc_name, svc_data in services.items():
+                    self.check_expression_injection(job_name, svc_name, svc_data)
+                steps = job_data.get("steps", [])
+                for step_num, step_data in enumerate(steps):
+                    self.check_run_commands(job_name, step_num, step_data)
+                    self.check_action_usage(job_name, step_num, step_data)
+                    self.check_upload_artifact(job_name, step_num, step_data)
+                    self.check_dangerous_checkout(job_name, step_num, step_data)
+        except Exception as e:
+            pass
 
     def check_expression_injection(self, job_name, svc_name, svc_data):
         image = svc_data.get("image", "")

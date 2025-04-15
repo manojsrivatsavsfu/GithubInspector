@@ -34,12 +34,15 @@ class ArgusChecker:
                 "tainted_env_workflow", set())
 
     def get_workflow_inputs(self):
-        on_conf = self.workflow.get("on", {})
-        if "workflow_call" not in on_conf:
-            return
-        inputs_def = on_conf["workflow_call"].get("inputs", {})
-        for inp_name, inp_conf in inputs_def.items():
-            self.tainted_inputs.add(inp_name)
+        try:
+            on_conf = self.workflow.get("on", {})
+            if "workflow_call" not in on_conf:
+                return
+            inputs_def = on_conf["workflow_call"].get("inputs", {})
+            for inp_name, inp_conf in inputs_def.items():
+                self.tainted_inputs.add(inp_name)
+        except Exception as e:
+            pass
 
     def get_workflow_env(self):
         env_dict = self.workflow.get("env", {})

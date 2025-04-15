@@ -42,9 +42,12 @@ severity_map = {
 
 
 def load_yaml(file_path):
-    with open(file_path, "r") as f:
-        text = f.read()
-    loader = yaml.YAML()
+    try:
+        with open(file_path, "r") as f:
+            text = f.read()
+        loader = yaml.YAML()
+    except:
+        return None
     return loader.load(text)
 
 
@@ -102,11 +105,10 @@ def print_issues(file_path, issues):
 
 def main(path):
     if os.path.isfile(path):
-        print(path)
         issues = analyze_file(path)
         print_issues(path, issues)
     else:
-        yml_files = glob.glob(os.path.join(path, "*.yml"))
+        yml_files = glob.glob(os.path.join(path, "**" ,"*.yml"), recursive=True)
         for yf in yml_files:
             issues = analyze_file(yf)
             print_issues(yf, issues)

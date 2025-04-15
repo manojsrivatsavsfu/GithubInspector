@@ -8,21 +8,24 @@ class GhastChecker:
         self.issues = []
 
     def analyze_all(self):
-        top_permissions = self.workflow.get("permissions")
-        jobs = self.workflow.get("jobs", {})
-        if not jobs:
-            if top_permissions is None:
-                self.issues.append({
-                    "type": "NO_DECLARATION",
-                    "message": "Permissions are not declared in the workflow"
-                })
-            return
-        for job_name, job_data in jobs.items():
-            self.check_permissions(job_name, top_permissions, job_data)
-            steps = job_data.get("steps", [])
-            for i, step in enumerate(steps):
-                self.check_run_commands(job_name, i, step)
-                self.check_action_usage(job_name, i, step)
+        try:
+            top_permissions = self.workflow.get("permissions")
+            jobs = self.workflow.get("jobs", {})
+            if not jobs:
+                if top_permissions is None:
+                    self.issues.append({
+                        "type": "NO_DECLARATION",
+                        "message": "Permissions are not declared in the workflow"
+                    })
+                return
+            for job_name, job_data in jobs.items():
+                self.check_permissions(job_name, top_permissions, job_data)
+                steps = job_data.get("steps", [])
+                for i, step in enumerate(steps):
+                    self.check_run_commands(job_name, i, step)
+                    self.check_action_usage(job_name, i, step)
+        except Exception as e:
+            pass
 
     def check_permissions(self, job_name, workflow_perms, job_data):
         job_level_perms = job_data.get("permissions")
