@@ -10,7 +10,7 @@ class Zizmor:
         self.file = file
         self.workflow = file
         self.issues = []
-        f = open("regex2.json", "r")
+        f = open("checker_modules/regex2.json", "r")
         self.regex_data = json.load(f)
         f.close()
 

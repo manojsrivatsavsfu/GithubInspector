@@ -1,7 +1,0 @@
-{
-    "secrets": {
-        "password": "^password:\\s+\\w+$",
-        "inherited secrets": "secrets: inherit",
-        "json secrets": "fromJSON\\(secrets"
-    }
-}

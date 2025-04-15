@@ -8,6 +8,9 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
+      - name: pull
+        uses: actions/github-script@v6
+
       - name: Run something
         run: |
           echo "Running analysis on PR..."

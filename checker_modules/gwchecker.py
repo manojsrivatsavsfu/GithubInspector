@@ -1,5 +1,5 @@
 import yaml
-import re
+import re, os
 import json
 import glob
 import bs4 as BeautifulSoup
@@ -10,7 +10,7 @@ class GWChecker:
         self.file = file
         self.workflow = file
         self.issues = []
-        f = open("regex.json", "r")
+        f = open("checker_modules/regex.json", "r")
         self.regex_data = json.load(f)
         f.close()
 
