@@ -25,5 +25,8 @@ Github Actions Inspector
     ```bash
     python3 main.py [name of file/directory which contains github workflows]
     ```
-4. Run Unit tests(TBD)
+4. Run Unit tests
+   ```bash
+   pytest unit_tests
+   ```
   
