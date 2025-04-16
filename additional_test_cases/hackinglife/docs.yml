@@ -1,0 +1,34 @@
+name: docs
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+    branches:
+    - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+
+      # # https://github.com/marketplace/actions/deploy-mkdocs
+      # - uses: actions/checkout@v1
+      # - uses: mhausenblas/mkdocs-deploy-gh-pages@master
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # https://squidfunk.github.io/mkdocs-material/publishing-your-site/?h=github#with-github-actions
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.*
+      - run: pip install mkdocs==1.5.3
+      - run: pip install mkdocs-material
+      - run: pip install mkdocs-glightbox
+      - run: pip3 install mkdocs-git-revision-date-localized-plugin
+      - run: mkdocs gh-deploy --force
+      - run: mkdocs --version
+

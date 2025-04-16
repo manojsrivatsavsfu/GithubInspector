@@ -1,0 +1,64 @@
+name: ci
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [ "main" ]
+
+permissions:
+  contents: write
+
+jobs:
+  clojure:
+    name: clojure test runner
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Java for Maven auth
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Install Clojure CLI
+        uses: DeLaGuardo/setup-clojure@11.0
+        with:
+          cli: 1.11.1.1405
+
+      - name: Cache deps
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.m2/repository
+            ~/.gitlibs
+          key: cljdeps-${{ hashFiles('deps.edn') }}
+          restore-keys: cljdeps-
+
+      - name: Generate pom.xml
+        run: clojure -Spom
+
+      - name: Submit Dependency Snapshot
+        uses: advanced-security/maven-dependency-submission-action@v3
+
+      - name: Run tests
+        run: clojure -M:test
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Dependencies scan
+        uses: clj-holmes/clj-watson-action@main
+        with:
+          aliases: ''
+          clj-watson-sha: "56dfd3e"
+          clj-watson-tag: "v4.1.3"
+          deps-edn-path: 'deps.edn'
+          suggest-fix: true
+          output-type: 'stdout-simple'
+          fail-on-result: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+

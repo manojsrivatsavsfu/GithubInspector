@@ -1,0 +1,58 @@
+name: update-dynamic-csv-data-files
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 2 * *' # “At 00:00 on day-of-month 2” (on the 2nd of the month)
+
+jobs:
+  build:
+    runs-on: ubuntu-latest #ubuntu-20.04 # specifically calls the version number instead of latest to work on 'act'
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+        architecture: 'x64'
+      env:
+          AGENT_TOOLSDIRECTORY: /opt/hostedtoolcache
+
+    - name: pip install requirements
+      run: |
+        export SKLEARN_ALLOW_DEPRECATED_SKLEARN_PACKAGE_INSTALL=True
+        pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pydar
+
+    - name: Web Scrap for New Changes - swath_coverage_by_time_position.csv
+      working-directory: pydar
+      run: |
+        python updateCsvSwathCoverage.py
+
+    - name: Web Scrap for New Changes - coradr_jpl_options.csv
+      working-directory: pydar
+      run: |
+        python updateCsvCORADRJPLOptions.py
+
+    - name: Web Scrap for New Changes - feature_name_details.csv
+      working-directory: pydar
+      run: |
+        python updateCsvFeatureNameDetails.py
+
+    - name: Check if script results in changes in files
+      uses: tj-actions/verify-changed-files@v20
+      id: verify-changed-files
+
+    - name: If file changed, throw error to review changes
+      if: steps.verify-changed-files.outputs.files_changed == 'true'
+      run: |
+        echo "Github Actions: review changes to data files"
+        echo "Update README, Pytests, update .CSV"
+        exit 1
+
+    - name: If no changes to existing files are found, pass
+      if: steps.verify-changed-files.outputs.files_changed == 'false'
+      run: |
+        echo "Github Actions: update csv scripts has no changes"

@@ -1,0 +1,83 @@
+name: Deploy SeolMyeongTang Client
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  deployment:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+    
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "16"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8.12.1
+
+      - name: Create Env File
+        run: |
+          touch .env
+          echo '${{ secrets.ENV }}' >> .env
+
+      - name: Cache node_modules
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: "**/node_modules"
+          key: ${{ runner.os }}-node-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install Dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: pnpm i
+
+      - name: Build
+        run: pnpm run build
+
+      - name: Delete html extension
+        run: |
+          for file in $(find ./out -name "*.html"); do mv "$file" "${file%%.html}"; done
+          mv out/index out/index.html
+
+      - name: Compress
+        run: tar -zcf ${GITHUB_SHA::8}.tar.gz out
+
+      - name: Upload to S3
+        run: |
+          aws s3 mv --region ap-northeast-2 \
+            ${GITHUB_SHA::8}.tar.gz \
+            ${{ secrets.S3_CLIENT_LOCATION }}/${GITHUB_SHA::8}.tar.gz
+
+      - name: Sync S3
+        run: |
+          aws s3 sync out ${{ secrets.S3_CLIENT_DEPLOYMENT }} \
+            --exclude "*.*" \
+            --content-type "text/html" \
+            --delete
+          aws s3 sync out ${{ secrets.S3_CLIENT_DEPLOYMENT }} \
+          --exclude "*" \
+          --include "*.png" --include "*.jpeg" --include "*.json" --include "*.js" --include "*.css" --include "*.ico" --include "*.html" \
+          --delete
+
+      - name: Invalidate CloudFront Cache
+        run: |
+          aws cloudfront create-invalidation \
+          --distribution-id ${{ secrets.AWS_DISTRIBUTION_ID }} \
+          --paths "/*"

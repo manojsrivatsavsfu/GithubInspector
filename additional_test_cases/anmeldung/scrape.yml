@@ -1,0 +1,27 @@
+name: scrape latest data
+
+on:
+  workflow_dispatch:
+
+jobs:
+  scheduled:
+    runs-on: ubuntu-latest
+    steps:
+      - name: check out this repo
+        uses: actions/checkout@v2
+      - name: cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            node_modules
+            /home/runner/.cache/puppeteer
+            /var/cache/apt/archives
+          key: node_modules-${{ hashfiles('package-lock.json') }}
+      - name: install timelimit
+        run: sudo dpkg -i assets/timelimit.deb
+      - name: install dependencies
+        run: npm ci
+      - name: fetch latest data
+        run: timelimit -t60 npm start || [ $? -eq 143 ]
+      - name: uptime
+        run: wget --spider "https://sm.hetrixtools.net/hb/?s=20a7474fe2f8c2aaac199277166985c8"

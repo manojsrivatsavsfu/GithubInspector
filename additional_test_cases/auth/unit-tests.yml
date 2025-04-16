@@ -1,0 +1,33 @@
+# This workflow will do a clean install of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Unit tests
+
+on: push
+
+jobs:
+  node-test:
+    # buildjet is working again now
+    runs-on: buildjet-4vcpu-ubuntu-2204
+    # runs-on: ubuntu-latest
+    container: mcr.microsoft.com/playwright:v1.44.1
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+      - uses: buildjet/cache@c3f061234bf0cd3e2ea5f1479d3cd8f526f0ba71 # v3
+        with:
+          path: "**/node_modules"
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+
+      - name: Install dependencies
+        run: yarn
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.PACKAGE_READ_TOKEN }}
+
+      - run: yarn lint
+      - run: yarn format:ci-cd
+      - run: yarn type-check
+      - run: yarn test:snapshots
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          path: test/**/__diff_output__/*.png

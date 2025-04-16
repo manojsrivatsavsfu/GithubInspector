@@ -1,0 +1,30 @@
+name: 'Commit Message Check'
+on:
+  pull_request:
+    branches: [ "main" ]
+
+
+jobs:
+  check-commit-message:
+    name: Commit Message Check 
+    runs-on: ubuntu-latest
+    steps:
+      - name: Commit Syntax Checker  
+        uses: gsactions/commit-message-checker@v2
+        with:
+          pattern: '^(feat|fix|build|chore|ci|docs|style|refactor|perf|revert|test){1}(\([\w\-\.]+\))?(!)?: ([\w ])+([\s\S]*)'
+          flags: 'gm'
+          error: 'The commit message is not in compliance with our guidelines (see https://www.conventionalcommits.org/en/v1.0.0/ )'
+          excludeDescription: 'true'
+          excludeTitle: 'true'
+          checkAllCommitMessages: 'true'
+          accessToken: ${{ secrets.GITHUB_TOKEN }}
+      - name: Commit Size Checker  
+        uses: gsactions/commit-message-checker@v2
+        with:
+          pattern: '^[^#].{1,74}'
+          error: 'The commit message must not exceed 74 characters.'
+          excludeDescription: 'true'
+          excludeTitle: 'true'
+          checkAllCommitMessages: 'true'
+          accessToken: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,77 @@
+name: Run tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: crimeisdown/trunk-transcribe
+
+jobs:
+  test:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12"]
+
+    steps:
+      # https://github.com/orgs/community/discussions/25678#discussioncomment-5242449
+      - name: Delete huge unnecessary tools folder
+        run: rm -rf /opt/hostedtoolcache
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Install uv and set the python version
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+      - name: Install dependencies
+        run: uv sync --all-extras --dev
+      - name: Run linters
+        run: |
+          ./make.sh lint
+      - name: Build image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: docker/Dockerfile
+          load: true
+          tags: "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+          platforms: linux/amd64
+          build-args: |
+            GIT_COMMIT=${{ github.sha }}
+          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          cache-to: type=inline
+      - name: Setup environment for testing
+        run: |
+          set -x
+          cp .env.testing .env
+          echo "VERSION=${{ github.sha }}" >> .env
+          cat .env
+
+          { set +x; } 2>/dev/null
+          sed -i 's/^# OPENAI_API_KEY=$/OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}/g' .env
+          sed -i 's/^# GOOGLE_GEMINI_API_KEY=$/GOOGLE_GEMINI_API_KEY=${{ secrets.GOOGLE_GEMINI_API_KEY }}/g' .env
+          sed -i 's/^# GOOGLE_MAPS_API_KEY=$/GOOGLE_MAPS_API_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }}/g' .env
+          sed -i 's/^# MAPBOX_API_KEY=$/MAPBOX_API_KEY=${{ secrets.MAPBOX_API_KEY }}/g' .env
+          sed -i 's/^# GEOCODIO_API_KEY=$/GEOCODIO_API_KEY=${{ secrets.GEOCODIO_API_KEY }}/g' .env
+          sed -i 's/^# ARCGIS_USERNAME=$/ARCGIS_USERNAME=${{ secrets.ARCGIS_USERNAME }}/g' .env
+          sed -i 's/^# ARCGIS_PASSWORD=$/ARCGIS_PASSWORD=${{ secrets.ARCGIS_PASSWORD }}/g' .env
+          set -x
+
+          echo "{}" > config/notifications.json
+          docker compose --ansi never up -d --quiet-pull
+      - name: Run tests
+        run: |
+          docker compose --ansi never logs -f &
+          sleep 10
+          ./make.sh test -s

@@ -1,0 +1,55 @@
+name: pytests
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest #ubuntu-20.04 # specifically calls the version number instead of latest to work on 'act'
+
+    strategy:
+      matrix:
+        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
+        python-version: ['3.11', '3.12', '3.13']
+
+    name: Python (${{ matrix.python-version }} on ${{ matrix.os }})
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        export SKLEARN_ALLOW_DEPRECATED_SKLEARN_PACKAGE_INSTALL=True
+        pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Test with pytest and generate coverage reports
+      run: |
+        python -m pytest --cov=./pydar --cov-report=xml --junitxml=pytest.xml
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      with:
+        name: Test results for ${{ matrix.os }}-${{ matrix.python-version }}
+        path: pytest.xml
+
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v5
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      with:
+        file: ./coverage.xml
+        env_vars: OS,PYTHON
+        name: codecov-umbrella
+        fail_ci_if_error: false
+   

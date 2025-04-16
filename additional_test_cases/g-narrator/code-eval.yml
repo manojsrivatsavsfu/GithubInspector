@@ -1,0 +1,40 @@
+name: Code evaluation
+
+on:
+    push:
+      branches: [ "main" ]
+      paths-ignore:
+        - '**/*.md'
+    pull_request:
+      branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  code-eval:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.10"
+      - name: Install application
+        run: |
+          python setup.py install
+          python -m pip install PyQt5
+        shell: cmd
+      - name: Testing
+        run: |
+          python -m pytest
+        shell: cmd
+        # TODO: add coverage
+      - name: Lint the code
+        run: |
+          python -m pylint --disable=R,C --fail-under=9 --extension-pkg-whitelist=PyQt5 ./gnarrator/ 
+        shell: cmd
+      - name: Formating the code
+        run: |
+          python -m black *.py
+        shell: cmd

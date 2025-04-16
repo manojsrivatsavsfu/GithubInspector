@@ -1,0 +1,65 @@
+name: GitHubPagesのためのフロントエンドビルド
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  frontend_build:
+    name: frontend build for github pages
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: 7
+          run_install: false
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: pnpm install
+        run: cd frontend && pnpm install
+
+      - name: build
+        run: cd frontend && pnpm build
+
+      - name: export
+        run: cd frontend && pnpm export
+
+      # GitHubPagesの_ディレクトリ読めない仕様回避
+      - name: add nojekyll
+        run: cd frontend && touch ./out/.nojekyll
+
+      # GitHubPagesがCNAMEをgh-pagesブランチに作ってしまい、毎回消えるので、mainブランチで保持してコピーする
+      - name: copy CNAME
+        run: cp CNAME ./frontend/out
+
+      # 公開用のリポジトリにプッシュ
+      - name: deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.USUYUKI_GITHUB_TOKEN }}
+          publish_dir: ./frontend/out

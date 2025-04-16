@@ -1,0 +1,19 @@
+name: Backend setup and test 🧪
+run-name: Backend setup and test
+on: [push, pull_request]
+jobs:
+  Install-Dependencies-And-Run-Tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: 'package.json'
+      - name: Install dependencies
+        run: npm install
+      - name: Pull images
+        run: npm run pull-images
+      - name: Run tests
+        run: npm test
+
+      

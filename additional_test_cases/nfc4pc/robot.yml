@@ -1,0 +1,42 @@
+on:
+  push:
+    tags:
+      - 'v*'
+    branches:
+      - main
+      - next
+  pull_request:
+    branches:
+      - main
+
+name: Build robot
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    name: Build and possibly release
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: zulu
+          cache: 'maven'
+      - name: Package
+        run: ./mvnw -T1C clean package
+      - uses: actions/upload-artifact@v4
+        with:
+          name: jar
+          path: target/nfc4pc.jar
+      - name: Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        id: create_release
+        uses: softprops/action-gh-release@v2.2.0
+        with:
+          files: |
+            target/nfc4pc.jar
+          fail_on_unmatched_files: true
+          body: Release ${{ github.ref_name }}
+          prerelease: true # manually promoted
