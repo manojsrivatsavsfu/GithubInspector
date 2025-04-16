@@ -1,0 +1,10 @@
+name: testdata-taint-to-def-docker-7
+on: [push]
+env:
+  SECRET: ${{ github.workflow }}
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Taint to def docker
+        run: docker build . --build-arg MY_ARG=${{ env.SECRET }}

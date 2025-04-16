@@ -1,0 +1,10 @@
+name: WritePermissionsAllJobs
+on: [push]
+permissions:
+  contents: write
+jobs:
+  SomeJob:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Task 1"
+        run: echo "Just a normal step"
