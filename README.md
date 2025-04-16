@@ -23,8 +23,12 @@ Github Actions Inspector
     ```
 3. Run the Main analysis script - This will scan a directory or file for vulnerabilities
     ```bash
-    python3 main.py [name of file/directory which contains github workflows]
+    python3 main.py exampleActions/
+    python3 main.py actions/
+    
     ```
+    The actions/ directory contains workflows that would trigger all vulnerabilities that we check for. Some examples are curated and some examples are taken from real repos
+    The exampleActions/ directory contains curated examples that demonstrate typical vulnerable workflow patterns
 4. Run Unit tests
    ```bash
    pytest unit_tests
