@@ -15,10 +15,13 @@ class Zizmor:
         f.close()
 
     def analyze_all(self):
-        for group_name, patterns_dict in self.regex_data.items():
-            for pattern_name, pattern_regex in patterns_dict.items():
-                self.regex_search(self.workflow, pattern_regex,
-                                  group_name, pattern_name)
+        try:
+            for group_name, patterns_dict in self.regex_data.items():
+                for pattern_name, pattern_regex in patterns_dict.items():
+                    self.regex_search(self.workflow, pattern_regex,
+                                    group_name, pattern_name)
+        except Exception as e:
+            print(f"Error in Zizmor: {e}")
 
     def regex_search(self, data, pattern, group_name, pattern_name):
         if isinstance(data, dict):
