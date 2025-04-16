@@ -21,10 +21,9 @@ Github Actions Inspector
     source env/bin/activate
     pip install -r requirements.txt
     ```
-3. Run the Main analysis script(which tests all workflows in the actions/ folder)
-
+3. Run the Main analysis script - This will scan a directory or file for vulnerabilities
     ```bash
-    python3 main.py
+    python3 main.py [name of file/directory which contains github workflows]
     ```
 4. Run Unit tests(TBD)
   
