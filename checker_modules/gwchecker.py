@@ -1,9 +1,10 @@
-import yaml
-import re, os
+import re
+import os
 import json
 import glob
 import bs4 as BeautifulSoup
 import requests
+
 
 class GWChecker:
     def __init__(self, file):
@@ -34,25 +35,25 @@ class GWChecker:
                     "type": "REGEX",
                     "message": f"Match found: '{data}' for pattern: '{pattern}'"
                 })
-    
+
     def verify_action(action, author):
         URL = f"https://github.com/marketplace?type=actions&query={action} publisher:{author}"
         resp = requests.get(URL)
-        
+
         if resp.status_code != 200:
             return -1
 
         soup = BeautifulSoup(resp.text, 'html.parser')
         result_section = soup.select(".col-md-6.mb-4.d-flex.no-underline")
-        
+
         if not result_section:
             return -1
-        
+
         item = BeautifulSoup(str(result_section[0]), 'html.parser')
         verified_icon = item.select('.octicon-verified')
-        
+
         if verified_icon:
-            return 0 
+            return 0
 
     def print_issues(self):
         if not self.issues:

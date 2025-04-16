@@ -1,9 +1,9 @@
-import yaml
 import re
 import json
 import glob
 import bs4 as BeautifulSoup
 import requests
+
 
 class Zizmor:
     def __init__(self, file):
@@ -24,10 +24,12 @@ class Zizmor:
         if isinstance(data, dict):
             for key, value in data.items():
                 if key == "credentials":
-                    self.regex_search('password: '+ value['password'], pattern, group_name, pattern_name)
+                    self.regex_search(
+                        'password: ' + value['password'], pattern, group_name, pattern_name)
                 if key == "secrets":
                     try:
-                        self.regex_search('secrets: '+ value, pattern, group_name, pattern_name)
+                        self.regex_search('secrets: ' + value,
+                                          pattern, group_name, pattern_name)
                     except:
                         pass
                 self.regex_search(key, pattern, group_name, pattern_name)
