@@ -7,7 +7,7 @@ from checker_modules.argus import ArgusChecker
 class TestArgusChecker(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.test_data_path = os.path.join("tests", "test_data")
+        cls.test_data_path = os.path.join("unit_tests", "test_data")
         cls.expected_argus = {
             "testdata-inline-script-13.yml": {
                 "SHELL_WITH_TAINT",

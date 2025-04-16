@@ -7,7 +7,7 @@ from checker_modules.octoscan import OctoScanChecker
 class TestOctoScanChecker(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.test_data_path = os.path.join("tests", "test_data")
+        cls.test_data_path = os.path.join("unit_tests", "test_data")
         cls.expected_octoscan = {
             "testdata-download-artifact.yml": {"EXTERNAL_DANGEROUS_ACTION"},
             "testdata-upload-artifact-dangerous-path.yml": {"UPLOAD_ARTIFACT_SENSITIVE_PATH"},
