@@ -7,7 +7,7 @@ from checker_modules.zizmor import Zizmor
 class TestZizmorChecker(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.test_data_path = os.path.join("tests", "test_data")
+        cls.test_data_path = os.path.join("unit_tests", "test_data")
         cls.expected_zizmor = {
             "testdata-secrets-inherit.yml": {"REGEX"},
             "testdata-container-cred.yml": {"REGEX"}
