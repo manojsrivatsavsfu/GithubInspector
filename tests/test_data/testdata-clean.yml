@@ -1,0 +1,9 @@
+name: Clean
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clean
+        run: echo "Clean"
+

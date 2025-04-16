@@ -1,0 +1,10 @@
+name: testdata-taint-to-sink-3
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - id: step_one
+        run: echo "::set-output name=out::secretValue"
+      - name: Taint to sink
+        run: echo "Taint => ${{ steps.step_one.outputs.out }}"

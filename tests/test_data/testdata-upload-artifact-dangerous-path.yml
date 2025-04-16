@@ -1,0 +1,11 @@
+name: Example-UploadArtifact
+on: push
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Upload artifact
+        uses: actions/upload-artifact@0123456789012345678901234567890123456789
+        with:
+          name: my-artifact
+          path: .
