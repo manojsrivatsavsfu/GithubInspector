@@ -70,11 +70,15 @@ class ArgusChecker:
     def analyze_all(self):
         if not self.workflow:
             return
-        self.get_workflow_inputs()
-        self.get_workflow_env()
-        jobs = self.workflow.get("jobs", {})
-        for job_id, job_data in jobs.items():
-            self.analyze_job(job_id, job_data)
+        try:
+            self.get_workflow_inputs()
+            self.get_workflow_env()
+            jobs = self.workflow.get("jobs", {})
+            for job_id, job_data in jobs.items():
+                self.analyze_job(job_id, job_data)
+        except Exception as e:
+            print(f"Error analyzing workflow: {e}")
+            return
 
     def analyze_step(self, job_id, step_id, step_index, step_data):
         self.tainted_env_step[job_id][step_id] = set()
