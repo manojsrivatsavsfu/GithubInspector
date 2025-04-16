@@ -14,7 +14,7 @@ Github Actions Inspector
    git clone https://github.com/manojsrivatsavsfu/GithubInspector.git
    cd GithubInspector
    ```
-2. Create a python virtual environment and Install the Dependencies
+2. Create a python virtual environment and Install the Dependencies ( Linux/ Mac )
 
     ```bash
     python3 -m venv env
